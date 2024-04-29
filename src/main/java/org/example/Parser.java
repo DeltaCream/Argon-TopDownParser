@@ -40,15 +40,15 @@ public class Parser {
     }
 
     void syntaxError(String message) {
-        System.out.println("Syntax Error: " + message);
-        System.exit(0);
-        // throw new RuntimeException("Syntax Error: " + message);
+//        System.out.println("Syntax Error: " + message);
+//        System.exit(0);
+         throw new RuntimeException("Syntax Error: " + message);
     }
 
     void syntaxError() {
-        System.out.println("Syntax Error");
-        System.exit(0);
-        //throw new RuntimeException("Syntax Error: ");
+//        System.out.println("Syntax Error");
+//        System.exit(0);
+        throw new RuntimeException("\nSyntax Error: \nLookahead: " + lookahead);
     }
 
     Node program() {
@@ -411,8 +411,10 @@ public class Parser {
                 case "NUMLIT":
                 case "IDENT": //conflict with IDENT
                 case "OPENPAR":
+                    System.out.println("LOOKAHEAD: " + lookahead);
                     if(lookahead.equals("IDENT")){
                         consume("IDENT", node);
+                        break;
                     }
                     node.addChild(numoper());
                     break;
@@ -703,7 +705,7 @@ public class Parser {
                     node.addChild(bool_rel());
                     break;
                 case "OPENPAR": //conflict with openpar
-                    consume("OPENPAR", node);
+                    // consume("OPENPAR", node);
                     //bool_rel();
                     if(pos+1 < inputList.size()){
                         switch(inputList.get(pos+1)){
