@@ -31,25 +31,24 @@ public class Parser {
             lookahead = inputList.get(pos);
             parent.addChild(new Node(str));
         } else {
-            throw new RuntimeException("Expected " + str + " but found " + inputList.get(pos));
+            syntaxError("Expected " + str + " but found " + inputList.get(pos));
         }
     }
 
-    void addToTree(String str) {
-
+    void emptyString(Node parent) {
+        parent.addChild(new Node("Empty"));
     }
 
     void syntaxError(String message) {
-        //System.out.println("Syntax Error: " + message);
-
-        //System.exit(0);
-        throw new RuntimeException("Syntax Error: " + message);
+        System.out.println("Syntax Error: " + message);
+        System.exit(0);
+        // throw new RuntimeException("Syntax Error: " + message);
     }
 
     void syntaxError() {
-        //System.out.println("Syntax Error");
-        //System.exit(0);
-        throw new RuntimeException("Syntax Error: ");
+        System.out.println("Syntax Error");
+        System.exit(0);
+        //throw new RuntimeException("Syntax Error: ");
     }
 
     Node program() {
@@ -70,6 +69,8 @@ public class Parser {
         if (pos < inputList.size() && !Objects.equals(inputList.get(pos), "EOF")) {
             node.addChild(statement());
             node.addChild(statements_x());
+        } else {
+            emptyString(node);
         }
         // else ε (do nothing)
         return node;
@@ -461,6 +462,8 @@ public class Parser {
                 consume("ADD", node);
                 node.addChild(strterm());
                 node.addChild(strterm_x());
+            } else {
+                emptyString(node);
             }
         } else {
             syntaxError("End of File Reached");
@@ -491,6 +494,8 @@ public class Parser {
                 consume("SUB", node);
                 node.addChild(term());
                 node.addChild(term_x());
+            } else {
+                emptyString(node);
             }
         } else {
             syntaxError("End of File Reached");
@@ -520,6 +525,8 @@ public class Parser {
                 consume("DIV", node);
                 node.addChild(factor());
                 node.addChild(factor_x());
+            } else {
+                emptyString(node);
             }
         } else {
             syntaxError("End of File Reached");
@@ -545,6 +552,8 @@ public class Parser {
                 consume("EXP", node);
                 node.addChild(exponent());
                 node.addChild(exponent_x());
+            } else {
+                emptyString(node);
             }
         } else {
             syntaxError("End of File Reached");
@@ -640,7 +649,9 @@ public class Parser {
                     node.addChild(condition());
                     node.addChild(boolderiv_x());
                     break;
-                //else, do nothing
+                default:
+                    emptyString(node);
+                    break;
             }
         } else {
             syntaxError("End of File Reached");
@@ -896,8 +907,10 @@ public class Parser {
         if (pos < inputList.size()) {
             if (lookahead.equals("NOT")) {
                 consume("NOT", node);
+            } else {
+                emptyString(node);
             }
-            //else do nothing because epsilon (empty string)
+            //else do nothing
         } else {
             syntaxError("End of File Reached");
         }
@@ -1019,8 +1032,10 @@ public class Parser {
             if (lookahead.equals("FUNNEL")) {
                 consume("FUNNEL", node);
                 node.addChild(funnel_right());
+            } else {
+                emptyString(node);
             }
-            //else do nothing because epsilon (empty string)
+            //else do nothing
         } else {
             syntaxError("End of File Reached");
         }
@@ -1070,6 +1085,9 @@ public class Parser {
                 case "DISTILL":
                     node.addChild(body());
                     node.addChild(body_x());
+                    break;
+                default:
+                    emptyString(node);
                     break;
             }
             //else do nothing because epsilon (empty string)
@@ -1171,6 +1189,8 @@ public class Parser {
             if (lookahead.equals("NUMLIT")) {
                 node.addChild(when_case());
                 node.addChild(case_x());
+            } else {
+                emptyString(node);
             }
         } else {
             syntaxError("End of File Reached");
